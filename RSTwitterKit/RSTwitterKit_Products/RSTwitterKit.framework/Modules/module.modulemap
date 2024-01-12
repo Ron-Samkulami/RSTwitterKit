@@ -1,0 +1,11 @@
+framework module RSTwitterKit {
+  umbrella header "RSTwitterKit.h"
+  export *
+
+  module * { export * }
+}
+
+module RSTwitterKit.Swift {
+  header "RSTwitterKit-Swift.h"
+  requires objc
+}

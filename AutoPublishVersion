@@ -1,0 +1,203 @@
+#!/bin/sh
+
+# 允许发布版的分支
+legal_branch="master"
+# 私有库索引名称
+specs_name="<YOUR_SPECS_NAME>"
+# 私有库索引的git地址，如果当前组件引用了私有库的其它组件，就要用到
+specs_source="https://xxxx.com/xxx/xxx.git"
+
+# 颜色定义
+RedColor='\033[31m'  #红色
+GreenColor='\033[32m'  #绿色
+YellowColor='\033[33m'  #黄色
+TealColor='\033[36m'    #湖蓝色
+WhiteColor='\033[37m'  #白色
+
+# 打印日志
+log_info() { echo "${WhiteColor}[INFO] $1"; } # 输出普通信息
+log_warn() { echo  "${YellowColor}[WARN] $1${WhiteColor}"; } # 输出警告信息
+log_success() { echo "${GreenColor}[SUCCESS] $1${WhiteColor}"; } # 输出成功信息
+log_error() { echo "${RedColor}[ERROR] ❌ $1${WhiteColor}"; } # 输出错误信息
+
+error() { log_error "$1";  exit 1; }
+
+log_section() {
+    echo "${TealColor}================================================================${WhiteColor}"
+    echo "${TealColor}             $1 "
+    echo "${TealColor}================================================================${WhiteColor}"
+}
+log_step() {
+    echo "${TealColor}########## $1 ##########${WhiteColor}"
+}
+
+# 比较版本号
+version_gt() { test "$(echo "$@" | tr " " "\n" | sort -V | head -n 1)" != "$1"; } # 大于
+version_ge() { test "$(echo "$@" | tr " " "\n" | sort -rV | head -n 1)" == "$1"; } # 大于等于
+version_lt() { test "$(echo "$@" | tr " " "\n" | sort -rV | head -n 1)" != "$1"; } # 小于
+version_le() { test "$(echo "$@" | tr " " "\n" | sort -V | head -n 1)" == "$1"; }  # 小于等于
+
+
+## 获取交互结果
+confirm() {
+    echo "${RedColor}[Confirm] $1"
+    validAns=0
+    while [ $validAns = 0 ]
+    do
+        read coverPush
+        case ${coverPush} in
+        y|Y)
+            validAns=1
+            return "1"
+            ;;
+        n|N)
+            validAns=1
+            return "0"
+            ;;
+        *)
+            echo "输入不合法，请重新输入[y/n]"
+            ;;
+        esac
+    done
+
+}
+
+##################### 脚本入口 ##########################
+
+log_section "私有库版本发布脚本"
+
+SRCROOT="$( cd "$( dirname "$0"  )" && pwd  )"
+
+# 检查当前文件夹下是否有podspec文件
+podspec_file_path=$(find "${SRCROOT}" -d -mindepth 1 \( -name "*.podspec" \) -print0)
+if [[ -f $podspec_file_path ]]; then
+    log_info "找到podspec文件: ${SRCROOT}/${podspec_file_path##*/}"
+else
+    log_warn "请把.podspec文件拉到此窗口，然后按Enter"
+    validPodspec=0
+    while [ $validPodspec = 0 ]
+    do
+        read input_file_path
+        # 检查文件后缀 && 检查是否存在
+        if [ "${input_file_path##*.}"x = "podspec"x ] && [ -f "$input_file_path" ]; then
+            validPodspec=1
+            podspec_file_path=${input_file_path}
+        else
+            validPodspec=0
+            log_error "${input_file_path}文件不存在或后缀不为.podspec，请重新选取文件拉到此窗口，然后按Enter"
+        fi
+    done
+
+fi
+
+
+# 去掉前缀的文件名
+podspec_pure_name=`basename $podspec_file_path .podspec`
+# 文件名
+podspec_name=`basename $podspec_file_path`
+log_info "podspec文件名为：${podspec_name}"
+# 文件路径
+podspec_dir_path=`dirname $podspec_file_path`
+log_info "podspec文件所在文件夹：${podspec_dir_path}"
+
+#cd到podspec文件夹
+cd "$podspec_dir_path"
+
+# 删除线上指定版本tag
+delete_remote_version_tag() {
+    delete_tag=$1
+    log_info "正在删除线上版本：$delete_tag"
+    git tag -d "${delete_tag}"
+    git push origin :refs/tags/"${delete_tag}"
+    if [ $? -eq 0 ]; then
+        log_success "删除线上版本：${delete_tag}成功！"
+    else
+        error "出错啦！请检查日志！"
+    fi
+}
+
+# 在最新commit发布指定版本
+publish_version_on_lastest_commit() {
+    version_tag=$1
+    log_info "正在发布版本：$version_tag"
+    git tag "${version_tag}"
+    git push origin "${version_tag}"
+    pod cache clean ${podspec_pure_name}
+    pod repo push ${specs_name} ${podspec_name} --verbose --allow-warnings --skip-import-validation --sources='${specs_source}'
+}
+
+# 覆盖一个版本
+cover_a_version() {
+    version_tag=$1
+    
+    # 先删除线上的对应版本
+    delete_remote_version_tag "$version_tag"
+    
+    # 重新发布版本
+    publish_version_on_lastest_commit "$version_tag"
+    if [ $? -eq 0 ]; then
+        log_success "版本${version_tag}覆盖更新完成，请通过以下步骤更新宿主工程："
+        log_success "\t1、Podfile中移除${podspec_pure_name}；\n\t2、执行\"pod install\"；\n\t3、执行\"pod cache clean ${podspec_pure_name}\" 清除缓存；\n\t4、Podfile中重新添加${podspec_pure_name}；\n\t5、执行\"pod install --repo-update\"。"
+    else
+        error "出错啦！请检查日志！"
+    fi
+}
+
+log_step "正在检查当前分支"
+current_branch=$(git branch --show-current | head -n 1)
+if [ $current_branch != $legal_branch ];then
+    error "只允许在主分支${legal_branch}推送版本!当前分支为：${current_branch}"
+fi
+
+log_step "正在检查版本号"
+# 拉取远端tags
+git fetch --tags
+# 遍历获取最新版本号
+existing_version=$(git tag -l)
+lastest_version=$(git tag -l | tail -n 1)
+for item in $existing_version
+    do
+    if version_gt $item $lastest_version; then
+        lastest_version=$item
+    fi
+done
+log_info "线上最新版本号：${lastest_version}"
+
+# 从podspec中获取待提交版本号
+current_version="$(awk '/s.version /{print}' $podspec_file_path | awk 'BEGIN{RS="="};END{print}' | sed "s/\\'//g" | sed -e 's/^[ ]*//g')"
+log_info "待提交的版本号：${current_version}\n"
+
+# 比较版本号
+if version_le $current_version $lastest_version; then
+    if version_lt $current_version $lastest_version; then
+        # 版本号小于线上最新版，直接退出
+        error "使用脚本覆盖旧版本容易出错，建议升版本号或手动操作"
+    else
+        # 版本号等于最新版本号，说明版本已存在，提示是否覆盖
+        confirm "待提交版本号 = 线上最新版本号，是否覆盖版本${current_version}？[y/n]"
+        if [ $? -eq 1 ]; then
+            log_warn "您选择了Yes，正在覆盖版本号：${version_tag}"
+            cover_a_version "$current_version"
+        else
+            error "您选择了NO，不做任何操作，即将退出"
+        fi
+    fi
+    
+else
+    #版本号大于最新版本号，说明版本不存在，提示是否新增
+    confirm "待提交版本号 > 线上最新版本号，是否发布新版本：${current_version}?[y/n]"
+    if [ $? -eq 1 ]; then
+        publish_version_on_lastest_commit "$current_version"
+        if [ $? -eq 0 ]; then
+            log_success "新版本：${current_version}发布完成，请通过\"pod update ${podspec_pure_name}\"更新宿主工程。"
+        else
+            error "出错啦！请检查日志！"
+        fi
+    else
+        error "您选择了NO，不做任何操作，即将退出"
+    fi
+fi
+
+
+exit 0
+

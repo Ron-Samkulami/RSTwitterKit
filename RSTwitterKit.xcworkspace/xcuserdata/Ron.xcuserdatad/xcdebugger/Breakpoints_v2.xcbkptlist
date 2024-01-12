@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "9275C794-9C4A-4BC2-A355-569A84ABAED9"
+   type = "0"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "4ABB71CE-4671-480A-BF2D-CC6DB910FDC8"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "TwitterRVKit/TwitterRVKit/Twift/Twift+Media.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "124"
+            endingLineNumber = "124"
+            landmarkName = "initializeUpload(data:mimeType:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "66803D49-2F22-4478-BC21-20107DDE2238"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "TwitterRVKit/TwitterRVKit/Twift/Twift+Media.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "154"
+            endingLineNumber = "154"
+            landmarkName = "appendMediaChunks(mediaKey:data:progress:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "30ADC7AB-156A-4169-B2FC-69C4445ED33A"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "TwitterRVKit/TwitterRVKit/Twift/Twift+Media.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "202"
+            endingLineNumber = "202"
+            landmarkName = "finalizeUpload(mediaKey:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9C65E43A-7756-40E2-BF54-60076045BF8C"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "TwitterRVKit/TwitterRVKit/Twift/Twift+Media.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "44"
+            endingLineNumber = "44"
+            landmarkName = "addAltText(to:text:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "795E0AE4-E508-4DC1-8141-BA9B6DCEAC74"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "TwitterRVKitDemo/TwitterRVKitDemo/PageViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "68"
+            endingLineNumber = "68"
+            landmarkName = "showTweetVC()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "795E0AE4-E508-4DC1-8141-BA9B6DCEAC74 - 2724fa9d4673232a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "TwitterRVKitDemo.SwiftViewController.showTweetVC() -&gt; ()"
+                  moduleName = "TwitterRVKitDemo"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Ron/Desktop/003-%E7%AC%AC%E4%B8%89%E6%96%B9SDK%E6%9B%B4%E6%96%B0/Twitter/TwitterRVKit/TwitterRVKitDemo/TwitterRVKitDemo/PageViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "68"
+                  endingLineNumber = "68"
+                  offsetFromSymbolStart = "88">
+               </Location>
+               <Location
+                  uuid = "795E0AE4-E508-4DC1-8141-BA9B6DCEAC74 - 6595e1d64819eac0"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Int) -&gt; () in TwitterRVKitDemo.SwiftViewController.showTweetVC() -&gt; ()"
+                  moduleName = "TwitterRVKitDemo"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Ron/Desktop/003-%E7%AC%AC%E4%B8%89%E6%96%B9SDK%E6%9B%B4%E6%96%B0/Twitter/TwitterRVKit/TwitterRVKitDemo/TwitterRVKitDemo/PageViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "69"
+                  endingLineNumber = "69"
+                  offsetFromSymbolStart = "88">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>
